@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Simple POS System</title>
+    <style>
+      * { box-sizing: border-box; }
+      body { margin: 0; font-family: "Segoe UI", Arial, sans-serif; background: #f1f5fb; color: #0f172a; font-size: 13px; }
+      .hidden { display: none !important; }
+      .login-wrap { min-height: 100vh; display: grid; place-items: center; padding: 20px; }
+      .login-card { width: 100%; max-width: 330px; background: #fff; border: 1px solid #ced8e8; border-radius: 8px; box-shadow: 0 8px 16px rgba(15, 23, 42, 0.08); padding: 16px; }
+      .logo-box { text-align: center; margin-bottom: 14px; }
+      .logo-icon { font-size: 30px; }
+      .logo-title { font-size: 19px; font-weight: 700; color: #1d3f72; margin: 4px 0; }
+      .logo-sub { font-size: 12px; color: #64748b; }
+      input, button, select { width: 100%; padding: 8px 10px; margin: 4px 0; border-radius: 4px; border: 1px solid #c5d2e3; }
+      button { border: 0; background: #2b6fd6; color: #fff; cursor: pointer; font-weight: 600; border-radius: 4px; }
+      button:hover { filter: brightness(1.05); }
+      .btn-danger { background: #ef4444; }
+      .btn-warning { background: #f59e0b; }
+      .btn-muted { background: #64748b; }
+      .btn-success { background: #16a34a; }
+      .app-shell { min-height: 100vh; display: grid; grid-template-columns: 220px 1fr; }
+      .sidebar { background: #163a68; color: #dbeafe; padding: 12px 10px; border-right: 1px solid #1e4b84; }
+      .brand { display: flex; align-items: center; gap: 8px; font-weight: 700; margin-bottom: 12px; color: #fff; }
+      .whoami { font-size: 12px; padding: 7px; background: #214f8f; border-radius: 5px; margin-bottom: 8px; }
+      .nav-btn { text-align: left; background: transparent; color: #dbeafe; border: 1px solid transparent; margin: 0 0 4px; width: 100%; font-size: 12.5px; padding: 8px 9px; }
+      .nav-btn:hover { background: #204a82; }
+      .nav-btn.active { background: #2b6fd6; border-color: #6ea6ff; }
+      .logout-btn { background: #be123c; margin-top: 6px; }
+      .main { padding: 12px; }
+      .topbar { background: #fff; border: 1px solid #d3deed; border-radius: 6px; padding: 10px 12px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
+      .page-title { font-weight: 700; color: #1d3f72; }
+      .card { background: #fff; border: 1px solid #d3deed; border-radius: 6px; padding: 10px; margin-bottom: 10px; }
+      .module-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+      .panel { border: 1px solid #d9e2ee; border-radius: 6px; padding: 8px; background: #fcfdff; }
+      .panel h4 { margin: 0 0 8px; font-size: 13px; color: #1d3f72; }
+      .grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; }
+      .kpi { background: #f8fbff; border: 1px solid #dbeafe; border-radius: 7px; padding: 10px; display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 8px; }
+      .kpi .label { font-size: 12px; color: #64748b; }
+      .kpi .value { font-size: 20px; font-weight: 700; color: #1d4f91; margin-top: 4px; }
+      .kpi-icon { width: 34px; height: 34px; border-radius: 6px; display: grid; place-items: center; color: #fff; font-size: 16px; font-weight: 700; }
+      .kpi-sales { background: #16a34a; }
+      .kpi-tx { background: #0ea5e9; }
+      .kpi-exp { background: #f59e0b; }
+      .kpi-sum { background: #2563eb; }
+      table { width: 100%; border-collapse: collapse; }
+      th, td { border: 1px solid #d9e2ee; padding: 6px; font-size: 12.5px; }
+      th { background: #edf3fb; text-align: left; color: #27496d; }
+      td button { width: auto; padding: 5px 8px; font-size: 12px; margin: 0 2px 0 0; border-radius: 3px; }
+      .action-group { white-space: nowrap; }
+      .danger { color: #b91c1c; font-weight: 700; }
+      .ok { color: #166534; font-weight: 700; }
+      .inline-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 8px; margin-bottom: 10px; }
+      .mini { font-size: 11px; color: #64748b; }
+      pre { background: #0f172a; color: #e2e8f0; border-radius: 8px; padding: 10px; overflow-x: auto; }
+      .section-title { margin: 0 0 8px; color: #1d3f72; font-size: 15px; }
+      .muted { color: #64748b; font-size: 12px; }
+      @media (max-width: 980px) { .app-shell { grid-template-columns: 1fr; } .sidebar { position: sticky; top: 0; z-index: 10; } .module-grid { grid-template-columns: 1fr; } .grid { grid-template-columns: 1fr 1fr; } }
+    </style>
+  </head>
+  <body>
+    <div id="loginPage" class="login-wrap">
+      <div class="login-card">
+        <div class="logo-box">
+          <div class="logo-icon">🏪</div>
+          <div class="logo-title">RetailEdge</div>
+          <div class="logo-sub">POS System</div>
+        </div>
+        <input id="username" placeholder="Username" value="admin" />
+        <input id="password" type="password" placeholder="Password" value="admin123" />
+        <select id="roleHint">
+          <option value="">Select Role</option>
+          <option>Admin</option>
+          <option>Cashier</option>
+          <option>Customer</option>
+        </select>
+        <button onclick="login()">Login</button>
+        <p style="font-size:12px;color:#64748b;margin:8px 0 0;">Default users: admin/admin123, cashier/cashier123, customer/customer123</p>
+      </div>
+    </div>
+
+    <div id="app" class="app-shell hidden">
+      <aside class="sidebar">
+        <div class="brand">🏪 <span>RetailEdge POS</span></div>
+        <div id="whoami" class="whoami"></div>
+        <button id="nav-dashboard" class="nav-btn active" onclick="showTab('dashboard')">📊 Dashboard</button>
+        <button id="nav-pos" class="nav-btn" onclick="showTab('pos')">🛒 POS / Cashier</button>
+        <button id="nav-inventory" class="nav-btn" onclick="showTab('inventory')">📦 Inventory</button>
+        <button id="nav-utang" class="nav-btn" onclick="showTab('utang')">💸 Utang</button>
+        <button id="nav-sales" class="nav-btn" onclick="showTab('sales')">📈 Sales / Reports</button>
+        <button id="nav-expenses" class="nav-btn" onclick="showTab('expenses')">💰 Expenses</button>
+        <button id="nav-employees" class="nav-btn" onclick="showTab('employees')">👤 Employees</button>
+        <button id="nav-users" class="nav-btn" onclick="showTab('users')" style="display:none;">👥 Users</button>
+        <button id="logoutBtn" class="logout-btn" onclick="logout()">Logout</button>
+      </aside>
+
+      <main class="main">
+        <div class="topbar">
+          <div class="page-title">Simple POS System Dashboard</div>
+          <div style="font-size:12px;color:#64748b;">Realtime store operations</div>
+        </div>
+        <div id="dashboard" class="card tabview"></div>
+        <div id="pos" class="card tabview hidden"></div>
+        <div id="inventory" class="card tabview hidden"></div>
+        <div id="sales" class="card tabview hidden"></div>
+        <div id="utang" class="card tabview hidden"></div>
+        <div id="employees" class="card tabview hidden"></div>
+        <div id="users" class="card tabview hidden"></div>
+        <div id="expenses" class="card tabview hidden"></div>
+      </main>
+    </div>
+    <script src="script.js"></script>
+  </body>
+</html>

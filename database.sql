@@ -1,0 +1,88 @@
+CREATE DATABASE IF NOT EXISTS `simple_pos_db`;
+USE `simple_pos_db`;
+
+CREATE TABLE IF NOT EXISTS users (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  username VARCHAR(100) UNIQUE NOT NULL,
+  password VARCHAR(255) NOT NULL,
+  role ENUM('admin','cashier','customer') NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS products (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  name VARCHAR(255) NOT NULL,
+  price DECIMAL(10,2) NOT NULL DEFAULT 0,
+  stock INT NOT NULL DEFAULT 0
+);
+
+CREATE TABLE IF NOT EXISTS transactions (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  total DECIMAL(10,2) NOT NULL,
+  discount DECIMAL(10,2) NOT NULL DEFAULT 0,
+  cash DECIMAL(10,2) NOT NULL,
+  `change` DECIMAL(10,2) NOT NULL,
+  cashier_id INT NULL,
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS transaction_items (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  transaction_id INT NOT NULL,
+  product_id INT NOT NULL,
+  name_snapshot VARCHAR(255) NOT NULL,
+  price_snapshot DECIMAL(10,2) NOT NULL,
+  qty INT NOT NULL,
+  subtotal DECIMAL(10,2) NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS borrowers (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  name VARCHAR(255) NOT NULL,
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS utang_entries (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  borrower_id INT NOT NULL,
+  description VARCHAR(255) NOT NULL,
+  amount DECIMAL(10,2) NOT NULL,
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS utang_payments (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  borrower_id INT NOT NULL,
+  amount DECIMAL(10,2) NOT NULL,
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS employees (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  name VARCHAR(255) NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS employee_shifts (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  employee_id INT NOT NULL,
+  time_in TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  time_out TIMESTAMP NULL
+);
+
+CREATE TABLE IF NOT EXISTS expenses (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  description VARCHAR(255) NOT NULL,
+  amount DECIMAL(10,2) NOT NULL,
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+INSERT INTO users (username, password, role)
+SELECT 'admin', 'admin123', 'admin'
+WHERE NOT EXISTS (SELECT 1 FROM users WHERE username = 'admin');
+
+INSERT INTO users (username, password, role)
+SELECT 'cashier', 'cashier123', 'cashier'
+WHERE NOT EXISTS (SELECT 1 FROM users WHERE username = 'cashier');
+
+INSERT INTO users (username, password, role)
+SELECT 'customer', 'customer123', 'customer'
+WHERE NOT EXISTS (SELECT 1 FROM users WHERE username = 'customer');

@@ -1,0 +1,15 @@
+{
+  "name": "simple-pos-system",
+  "version": "1.0.0",
+  "description": "Web-based Simple POS System",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "dotenv": "^16.6.1",
+    "express": "^4.21.2"
+    ,
+    "mysql2": "^3.15.2"
+  }
+}
