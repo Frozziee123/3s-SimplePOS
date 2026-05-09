@@ -42,3 +42,4 @@ Web-based POS system with MySQL database (phpMyAdmin compatible).
 - Database and tables are auto-created on first run.
 - `database.sql` is included for manual import in phpMyAdmin.
 - This is a practical starter version. Passwords are stored in plain text for simplicity and should be hashed in production.
+
